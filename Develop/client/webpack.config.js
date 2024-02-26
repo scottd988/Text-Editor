@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
 const path = require('path');
-const WorkboxPlugin = require('workbox-webpack-plugin');
+const { InjectManifest } = require('workbox-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 // TODO: Add and configure workbox plugins for a service worker and manifest file.
@@ -22,10 +22,31 @@ module.exports = () => {
     plugins: [
       new HtmlWebpackPlugin({
         template: './index.html',
-        title: 'Webpack Plugin',
+        title: 'Jate',
       }),
       new MiniCssExtractPlugin(),
-      new WorkboxPlugin.GenerateSW()
+      new InjectManifest({
+        swSrc: './src-sw.js',
+        swDest: 'service-worker.js',
+      }),
+      new WebpackPwaManifest({
+        fingerprints: false,
+        inject: true,
+        name: 'Jate',
+        short_name: 'Jate',
+        description: 'A simple note-taking web app',
+        background_color: '#7eb4e7',
+        theme_color: '#7eb4e7',
+        start_url: './',
+        publicPath: './',
+        icons: [
+          {
+            src: path.resolve('src/images/logo.png'),
+            sizes: [96, 128, 192, 256, 384, 512],
+            destination: path.join('assets', 'icons')
+          },
+        ],
+      }),
     ],
 
     module: {
